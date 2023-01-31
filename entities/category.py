@@ -1,0 +1,2 @@
+class CategoryType:
+    pass
