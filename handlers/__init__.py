@@ -1,0 +1,3 @@
+from .instake_handlers import register_intakes_handlers
+from .medicine_handlers import register_medicines_handlers
+from .user_handlers import register_users_handlers

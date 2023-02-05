@@ -1,1 +1,1 @@
-from config.config import config
+from config.config import config, set_main_menu, COMMAND
