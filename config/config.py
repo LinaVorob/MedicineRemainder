@@ -2,6 +2,7 @@ import os
 from dataclasses import dataclass
 
 from aiogram import Dispatcher
+from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import BotCommand
 from dotenv import load_dotenv
 
@@ -14,30 +15,33 @@ COMMAND = {
     "/update": "Внести изменения в лекарство и/или его приём"
 }
 
-CATEGORIES = [
-    'Антибактериальный препарат',
-    'Антибиотик',
-    'Гормоны',
-    'Диагностическое средство',
-    'Влияющее на иммунитет',
-    'Влияющее на метаболизм',
-    'Влияющее на психику',
-    'Влияющее на свертываемость крови',
-    'Сосудотонизирующее',
-    'Сосудосуживающее',
-    'Влияющее на функцию бронхов',
-    'Влияющее на функции ЖКТ',
-    'Влияющее на функции миокарда',
-    'Влияющее на функцию почек',
-    "Мочегонное",
-    'Противовирусное',
-    'Противовоспалительное',
-    'Обезболивающее',
-    'Противогрибковое',
-    'Противоопухолевое',
-    'Противопаразитарное',
-    'Противоглистное'
-]
+PATTERN = r'((\d{1,2})\s?(?:год|лет|года))?\s?((\d{1,2})\s?месяц(?:а|ев)?)?\s?((\d{1,2})\s?(?:день|дня|дней))?\s?(\d\d:\d\d:\d\d)?'
+PATTERN_TIME_CLASSIC = r'(\d\d):(\d\d)'
+PATTERN_TIME_WORDS = r'(\d{1,2}ч)\s?(\d{1,2}м)'
+
+class InputForm(StatesGroup):
+    # название лекарства
+    name = State()
+    # название категории
+    category = State()
+    # условия приема
+    condition = State()
+    # есть ли перерыв
+    is_break = State()
+    # общее время приема
+    period = State()
+    # длительность непрерывного приема
+    past_one_intake = State()
+    # кол-во приемов в день
+    count_intakes_for_one_day = State()
+    # время приема
+    time_intake = State()
+    # длительность перерыва
+    step_day_intake = State()
+    # время между приемами для одного дня
+    between_in_day = State()
+    doze = State()
+    doze_in_package = State()
 
 
 @dataclass
@@ -58,6 +62,7 @@ class TgConfig:
 class Config:
     tgbot: TgConfig
     db: DatabaseConfig
+    state_input: InputForm = InputForm()
 
 
 async def set_main_menu(dp: Dispatcher):
@@ -78,6 +83,6 @@ config = Config(
         database=os.getenv('DATABASE'),
         user=os.getenv('LOGIN'),
         password=os.getenv('PASSWORD'),
-        host=os.getenv('HOST')
+        host=os.getenv('HOST'),
     )
 )

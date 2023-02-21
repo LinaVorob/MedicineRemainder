@@ -1,7 +1,8 @@
 import uuid
+from datetime import time, date
 
 from sqlalchemy.orm import declarative_base, relationship
-from sqlalchemy.dialects.postgresql import UUID, VARCHAR, TEXT, INTEGER, BOOLEAN
+from sqlalchemy.dialects.postgresql import UUID, VARCHAR, TEXT, INTEGER, BOOLEAN, DATE, SMALLINT, TIME
 from sqlalchemy import Column, ForeignKey, CheckConstraint
 
 Base = declarative_base()
@@ -38,7 +39,17 @@ class Intake(Base):
     pair_id = Column(UUID(as_uuid=True), unique=True, primary_key=True, default=uuid.uuid4, autoincrement=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey('users.user_id', ondelete='CASCADE'), nullable=False)
     medicine_id = Column(UUID(as_uuid=True), ForeignKey('medicines.medicine_id', ondelete='CASCADE'), nullable=False)
-    time_of_intake = Column(VARCHAR(8), nullable=False, default="00 00 00")
-    step_of_intake = Column(VARCHAR(14), nullable=False, default="00 00 00 00 00")
-    period_of_intake = Column(VARCHAR(14), nullable=False, default="00 00 00 00 00")
+    # Время приема
+    time_of_intake = Column(TIME, nullable=False, default=time(0))
+    # Кол-во приемов в день
+    doze_in_day = Column(SMALLINT, nullable=False, default=1)
+    # промежуток между приемами в течение дня
+    between_doze = Column(TIME, nullable=False, default=time(0))
+    # Промежуток между приемами
+    step_of_intake = Column(SMALLINT, nullable=False, default=0)
+    # Длительность непрерывного приема
+    duration_of_one_intake = Column(SMALLINT, nullable=False, default=0)
+    # Общее время приема
+    period_of_intake = Column(DATE, nullable=True, default=date.today())
+    # количество оставшихся доз
     count_doze = Column(INTEGER, nullable=False, default=0)
