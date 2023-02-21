@@ -8,7 +8,6 @@ from config import config
 
 class MedicineType(BaseModel):
     name: str
-    category: uuid.UUID
-    description: str
-    intake_info: str
-
+    category: str = None
+    description: str = None
+    intake_info: str = None

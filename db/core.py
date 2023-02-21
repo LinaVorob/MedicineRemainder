@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session
 from sqlalchemy_utils import database_exists, create_database
 
 from config import config
-from db.models import Base, User, Medicine, Intake
+from db.models import Base, User, Medicine, Intake, Category
 from entities import MedicineType, CategoryType, UserType, IntakeType
 
 
@@ -36,7 +36,10 @@ class DatabaseSettings:
     def _check_tables_exist(self):
         """Проверяет, есть ли в БД таблицы. Создает, если нет."""
         engine = create_engine(self.get_db_url())
-        if not engine.has_table('users'):
+        execute_string = 'SELECT * FROM pg_catalog.pg_tables;'
+        with engine.connect() as con:
+            tbs = con.execute(text(execute_string))
+        if not tbs:
             Base.metadata.create_all(engine)
         engine.dispose()
 
@@ -93,3 +96,12 @@ class Database:
 
     def check_intake(self, param, value_check):
         return self._check_data_exists(Intake, param, value_check)
+
+    def get_categories(self):
+        engine = create_engine(self.url)
+        try:
+            with Session(engine) as session:
+                query = session.query(Category.category_name).all()
+            return query
+        finally:
+            engine.dispose()
