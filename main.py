@@ -1,7 +1,7 @@
 import asyncio
 from traceback import format_exc
 from aiogram import Bot, Dispatcher, executor
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.contrib.fsm_storage.redis import RedisStorage2
 
 from config import config, set_main_menu
 from handlers import register_users_handlers, register_intakes_handlers, register_medicines_handlers
@@ -16,7 +16,7 @@ def register_all_handlers(dp: Dispatcher):
 async def main():
     # Инициализируем бот и диспетчер
     bot: Bot = Bot(token=config.tgbot.token, parse_mode='HTML')
-    storage = MemoryStorage()
+    storage = RedisStorage2()
     dp: Dispatcher = Dispatcher(bot, storage=storage)
     await set_main_menu(dp)
 

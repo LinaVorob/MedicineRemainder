@@ -46,6 +46,11 @@ class DatabaseSettings:
 
 class Database:
 
+    def __new__(cls, *args, **kwargs):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(Database, cls).__new__(cls, *args, **kwargs)
+        return cls.instance
+
     def __init__(self):
         self.db = DatabaseSettings()
         self.url = self.db.get_db_url()
@@ -101,7 +106,7 @@ class Database:
         engine = create_engine(self.url)
         try:
             with Session(engine) as session:
-                query = session.query(Category.category_name).all()
+                query = session.query(Category.category_name, Category.category_id).all()
             return query
         finally:
             engine.dispose()

@@ -12,12 +12,14 @@ COMMAND = {
     "/delete": "Удалить лекарство",
     "/info": "Информация о лекарстве",
     "/intake_info": "Информация о приеме лекарства",
-    "/update": "Внести изменения в лекарство и/или его приём"
+    "/update": "Внести изменения в лекарство и/или его приём",
+    "/cancel": "Отмена действия"
 }
 
 PATTERN = r'((\d{1,2})\s?(?:год|лет|года))?\s?((\d{1,2})\s?месяц(?:а|ев)?)?\s?((\d{1,2})\s?(?:день|дня|дней))?\s?(\d\d:\d\d:\d\d)?'
 PATTERN_TIME_CLASSIC = r'(\d\d):(\d\d)'
 PATTERN_TIME_WORDS = r'(\d{1,2}ч)\s?(\d{1,2}м)'
+
 
 class InputForm(StatesGroup):
     # название лекарства
@@ -36,10 +38,14 @@ class InputForm(StatesGroup):
     count_intakes_for_one_day = State()
     # время приема
     time_intake = State()
+    time_intake_hour = State()
+    time_intake_minute = State()
     # длительность перерыва
     step_day_intake = State()
     # время между приемами для одного дня
     between_in_day = State()
+    between_in_day_hour = State()
+    between_in_day_minute = State()
     doze = State()
     doze_in_package = State()
 
@@ -62,7 +68,7 @@ class TgConfig:
 class Config:
     tgbot: TgConfig
     db: DatabaseConfig
-    state_input: InputForm = InputForm()
+    state_input: InputForm
 
 
 async def set_main_menu(dp: Dispatcher):
@@ -83,6 +89,6 @@ config = Config(
         database=os.getenv('DATABASE'),
         user=os.getenv('LOGIN'),
         password=os.getenv('PASSWORD'),
-        host=os.getenv('HOST'),
-    )
+        host=os.getenv('HOST')),
+    state_input=InputForm()
 )
